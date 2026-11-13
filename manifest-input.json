@@ -1,0 +1,39 @@
+{
+ "id": "input.html",
+ "name": "SAKTI – Catat Kegiatan",
+ "short_name": "Catat SAKTI",
+ "description": "Catat kegiatan harian seperti chat WhatsApp — SAKTI",
+ "start_url": "input.html",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#efeae2",
+ "theme_color": "#008069",
+ "lang": "id",
+ "icons": [
+  {
+   "src": "icons/input-192.png?v=2",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/input-512.png?v=2",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/maskable-192.png?v=2",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "maskable"
+  },
+  {
+   "src": "icons/maskable-512.png?v=2",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

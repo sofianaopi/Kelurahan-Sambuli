@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<script>try { sessionStorage.setItem('sakti-sesi', '1'); } catch (e) { }</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis BerAKHLAK – SAKTI</title>
+<meta name="theme-color" content="#46178f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest-dashboard.json">
+<link rel="icon" href="icons/dashboard-192.png?v=2">
+<link rel="apple-touch-icon" href="icons/dashboard-192.png?v=2">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #46178f; color: #fff; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; transition: background .4s; }
+  body.benar { background: #26890c; } body.salah { background: #c8102e; } body.kosong { background: #5b5b6e; }
+  .bg { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .bg i { position: absolute; opacity: .07; animation: apung 16s linear infinite; } .bg i svg { width: 100%; height: 100%; }
+  @keyframes apung { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  header { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 10px 14px; padding-top: calc(10px + env(safe-area-inset-top)); background: rgba(0,0,0,.2); font-weight: 800; }
+  header .kiri { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
+  header .pil { background: rgba(255,255,255,.18); border-radius: 9px; padding: 5px 10px; font-size: 14px; white-space: nowrap; }
+  header .pil.putih { background: #fff; color: #333; }
+  header a { color: #fff; text-decoration: none; font-size: 22px; line-height: 1; padding: 2px 4px; }
+  main { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 560px; margin: 0 auto; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .tengah { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 14px; }
+  .logo { display: flex; gap: 4px; justify-content: center; } .logo span { width: 30px; height: 38px; border-radius: 8px; display: grid; place-items: center; font-weight: 900; font-size: 19px; box-shadow: 0 3px 0 rgba(0,0,0,.2); animation: lompat 2.4s ease-in-out infinite; }
+  @keyframes lompat { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-8px); } }
+  h1 { margin: 6px 0 0; font-size: 28px; } .sub { margin: 0; opacity: .85; font-size: 15px; line-height: 1.5; }
+  .kotak { background: #fff; color: #222; border-radius: 16px; padding: 18px; width: 100%; max-width: 360px; box-shadow: 0 6px 0 rgba(0,0,0,.2); }
+  .kotak input { width: 100%; border: 2px solid #ccc; border-radius: 10px; padding: 14px; font: inherit; font-size: 26px; font-weight: 900; text-align: center; letter-spacing: .15em; }
+  .kotak input:focus { outline: 0; border-color: #46178f; }
+  .tbl { width: 100%; margin-top: 12px; border: 0; border-radius: 10px; padding: 15px; font: inherit; font-size: 18px; font-weight: 900; background: #333; color: #fff; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,.3); }
+  .tbl:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.3); } .tbl:disabled { opacity: .5; }
+  .tbl.putih { background: #fff; color: #46178f; max-width: 360px; }
+  .catatan { font-size: 13.5px; opacity: .85; max-width: 360px; line-height: 1.5; }
+  .err { background: rgba(0,0,0,.25); border-radius: 10px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
+  .ceklis { width: 84px; height: 84px; border-radius: 50%; background: #fff; color: #26890c; display: grid; place-items: center; font-size: 48px; font-weight: 900; animation: pop .5s cubic-bezier(.3,1.6,.6,1); }
+  @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+  .nama { background: #fff; color: #222; border-radius: 12px; padding: 12px 22px; font-size: 22px; font-weight: 900; box-shadow: 0 4px 0 rgba(0,0,0,.2); }
+  .putar { width: 46px; height: 46px; border: 5px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: putar 1s linear infinite; } @keyframes putar { to { transform: rotate(360deg); } }
+  .kedip { animation: kedip 2s ease-in-out infinite; } @keyframes kedip { 50% { opacity: .45; } }
+  /* soal */
+  .soal-kep { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .timer { position: relative; width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; font-size: 26px; font-weight: 900; flex: 0 0 auto; background: conic-gradient(#fff var(--p, 100%), rgba(255,255,255,.2) 0); }
+  .timer::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #864cbf; } .timer span { position: relative; } .timer.genting::before { background: #e21b3c; }
+  .soal { flex: 1; background: #fff; color: #1d1d1d; border-radius: 14px; padding: 14px 16px; font-size: 18px; font-weight: 800; line-height: 1.35; box-shadow: 0 4px 0 rgba(0,0,0,.2); }
+  .opsi { display: grid; gap: 10px; flex: 1; align-content: start; }
+  .op { display: flex; align-items: center; gap: 14px; width: 100%; border: 0; border-radius: 12px; padding: 16px; min-height: 74px; color: #fff; font: inherit; font-size: 17px; font-weight: 800; text-align: left; line-height: 1.3; cursor: pointer; box-shadow: 0 5px 0 rgba(0,0,0,.28); }
+  .op:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,.28); } .op svg { width: 34px; height: 34px; flex: 0 0 auto; }
+  .op:disabled { cursor: default; }
+  .terkirim .bentuk { width: 110px; height: 110px; border-radius: 22px; display: grid; place-items: center; box-shadow: 0 6px 0 rgba(0,0,0,.25); animation: pop .45s cubic-bezier(.3,1.6,.6,1); } .terkirim .bentuk svg { width: 64px; height: 64px; }
+  /* hasil */
+  .hasil-ik { width: 96px; height: 96px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 56px; font-weight: 900; animation: pop .5s cubic-bezier(.3,1.6,.6,1); }
+  body.benar .hasil-ik { color: #26890c; } body.salah .hasil-ik, body.kosong .hasil-ik { color: #c8102e; } body.kosong .hasil-ik { color: #5b5b6e; }
+  .poin { background: rgba(0,0,0,.25); border-radius: 12px; padding: 10px 22px; font-size: 30px; font-weight: 900; }
+  .api { font-weight: 800; font-size: 16px; }
+  .kunci { background: rgba(0,0,0,.2); border-radius: 12px; padding: 10px 14px; font-size: 14.5px; display: flex; align-items: center; gap: 10px; text-align: left; max-width: 100%; }
+  .kunci i { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; flex: 0 0 auto; } .kunci i svg { width: 18px; height: 18px; }
+  .posisi { background: #fff; color: #222; border-radius: 14px; padding: 12px 18px; font-weight: 900; font-size: 18px; box-shadow: 0 4px 0 rgba(0,0,0,.2); width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; }
+  .posisi .no { width: 44px; height: 44px; border-radius: 12px; background: #46178f; color: #fff; display: grid; place-items: center; font-size: 20px; flex: 0 0 auto; }
+  .posisi small { display: block; font-size: 13px; color: #6b7280; font-weight: 700; }
+  .papan { width: 100%; background: rgba(0,0,0,.2); border-radius: 14px; padding: 6px 12px; text-align: left; }
+  .papan div { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.12); font-weight: 700; font-size: 15px; } .papan div:last-child { border-bottom: 0; }
+  .papan div b { width: 24px; text-align: center; } .papan div span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .papan div.saya { color: #ffe066; }
+  .medali { font-size: 84px; line-height: 1; animation: pop .6s cubic-bezier(.3,1.6,.6,1); }
+  .bawah { text-align: center; font-size: 13px; opacity: .75; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+<header><span class="kiri" id="hKiri">🎮 Kuis BerAKHLAK</span><span class="pil" id="hNo" hidden></span><span class="pil putih" id="hSkor" hidden></span><a href="index.html" title="Kembali ke SAKTI" aria-label="Kembali">×</a></header>
+<main id="isi"><div class="tengah"><div class="putar"></div></div></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+(() => {
+  const S = window.SKP, $ = id => document.getElementById(id), esc = S.esc, c = () => S.client();
+  const WARNA = ['#e21b3c', '#1368ce', '#d89e00', '#26890c'];
+  const BENTUK = ['<svg viewBox="0 0 32 32"><path d="M16 4 29 27H3z" fill="#fff"/></svg>', '<svg viewBox="0 0 32 32"><path d="M16 2 30 16 16 30 2 16z" fill="#fff"/></svg>',
+    '<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#fff"/></svg>', '<svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="2" fill="#fff"/></svg>'];
+  const fmt = n => Number(n || 0).toLocaleString('id-ID');
+  const LOGO = 'BerAKHLAK'.split('').map((h, i) => `<span style="background:${['#1d4ed8', '#1d4ed8', '#1d4ed8', '#0f766e', '#7c3aed', '#db2777', '#b91c1c', '#ea580c', '#059669'][i]};animation-delay:${i * .12}s">${h}</span>`).join('');
+  $('bg').innerHTML = Array.from({ length: 10 }, (_, i) => `<i style="left:${(i * 37) % 100}%;top:${(i * 53) % 100}%;width:${50 + (i * 17) % 60}px;height:${50 + (i * 17) % 60}px;animation-duration:${14 + i % 5 * 3}s">${BENTUK[i % 4]}</i>`).join('');
+  let saya = null, sesi = null, d = null, kunci = '', tenggat = 0, poll = null, sibuk = false, kirim = false, pilihan = null, lock = null, detikLalu = -1;
+  const isi = h => { $('isi').innerHTML = h; };
+  const warnaBody = k => { document.body.classList.remove('benar', 'salah', 'kosong'); if (k) document.body.classList.add(k); };
+  const namaPendek = n => { const w = String(n || '').replace(/,.*$/, '').trim().split(/\s+/).filter(x => !/^(hj?|dr|ir|drs|dra|prof)\.?$/i.test(x)); return w.slice(0, 3).join(' ') || n; };
+  const getar = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) { } };
+  async function jagaLayar() { try { if ('wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => lock = null); } } catch (e) { } }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && sesi) { jagaLayar(); tarik(); } });
+
+  function layarPin(pin, pesan, info) {
+    warnaBody(''); $('hNo').hidden = $('hSkor').hidden = true; $('hKiri').textContent = '🎮 Kuis BerAKHLAK';
+    isi(`<div class="tengah"><div class="logo">${LOGO}</div><h1>Kuis BerAKHLAK</h1><p class="sub">${info ? esc(info) : 'Masukkan PIN yang tampil di layar.'}</p>
+      <div class="kotak"><input id="iPin" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="PIN Kuis" value="${esc(pin || '')}" aria-label="PIN kuis"><button class="tbl" id="bMasuk" type="button">Masuk</button></div>
+      ${pesan ? `<div class="err">${esc(pesan)}</div>` : ''}<div class="catatan">Anda bermain sebagai <b>${esc(saya.nama)}</b>. Jawab secepat mungkin: semakin cepat menjawab benar, semakin besar poinnya.</div></div>`);
+    const go = () => gabung($('iPin').value.replace(/\D/g, ''));
+    $('bMasuk').onclick = go; $('iPin').onkeydown = e => { if (e.key === 'Enter') go(); };
+    if (!pin) $('iPin').focus();
+  }
+  async function gabung(pin) {
+    if (pin.length !== 6) return layarPin(pin, 'PIN terdiri dari 6 angka.');
+    $('bMasuk') && ($('bMasuk').disabled = true);
+    try { const r = S.cek(await c().rpc('kuis_gabung', { p_pin: pin })); mulai(r.id); }
+    catch (x) { layarPin(pin, /function|schema/i.test(x.message) ? 'Kuis belum tersedia. Hubungi admin.' : x.message); }
+  }
+  function mulai(id) {
+    sesi = id; try { sessionStorage.setItem('sakti-kuis', id); } catch (e) { } kunci = ''; jagaLayar();
+    clearInterval(poll); poll = setInterval(tarik, 1000); tarik();
+    setInterval(detak, 100);
+  }
+  async function tarik() {
+    if (!sesi || sibuk) return; sibuk = true;
+    try { const r = S.cek(await c().rpc('kuis_keadaan', { p_sesi: sesi })); terima(r); }
+    catch (x) { if (/belum bergabung/i.test(x.message)) { clearInterval(poll); sesi = null; try { sessionStorage.removeItem('sakti-kuis'); } catch (e) { } layarPin('', 'Sesi kuis tidak ditemukan. Masukkan PIN lagi.'); } }
+    finally { sibuk = false; }
+  }
+  function terima(r) {
+    d = r; $('hKiri').textContent = '🎮 ' + r.judul;
+    $('hNo').hidden = r.status === 'lobi'; $('hNo').textContent = r.status === 'selesai' ? 'Selesai' : `${r.no + 1} / ${r.total}`;
+    $('hSkor').hidden = false; $('hSkor').textContent = fmt(r.skor) + ' poin';
+    if (r.status === 'soal') tenggat = performance.now() + (r.sisa_ms || 0);
+    const k = r.status + '|' + r.no + '|' + (r.jawab ? 'j' : '');
+    if (k === kunci) { if (r.status === 'lobi') $('jPeserta') && ($('jPeserta').textContent = r.peserta + ' pemain sudah masuk'); return; }
+    const naik = !kunci.startsWith(r.status + '|' + r.no + '|'); kunci = k;
+    if (r.status === 'lobi') lobi();
+    else if (r.status === 'soal') { if (r.jawab) terkirim(r.jawab.pilih); else { pilihan = null; kirim = false; soal(); if (naik) getar(60); } }
+    else if (r.status === 'hasil') hasil();
+    else akhir();
+  }
+  function lobi() {
+    warnaBody('');
+    isi(`<div class="tengah"><div class="ceklis">✓</div><h1>Anda sudah masuk!</h1><div class="nama">${esc(namaPendek(saya.nama))}</div><p class="sub">Lihat nama Anda di layar.</p>
+      <div class="putar" style="margin-top:14px"></div><p class="sub kedip">Menunggu kuis dimulai…</p><p class="sub" id="jPeserta" style="font-size:13.5px">${d.peserta} pemain sudah masuk</p></div>`);
+  }
+  function soal() {
+    warnaBody(''); detikLalu = -1; const q = d.soal;
+    isi(`<div class="soal-kep"><div class="timer" id="tm"><span>${d.durasi}</span></div><div class="soal">${esc(q.t)}</div></div>
+      <div class="opsi">${q.p.map((p, j) => `<button class="op" type="button" data-j="${j}" style="background:${WARNA[j]}">${BENTUK[j]}<span>${esc(p)}</span></button>`).join('')}</div>`);
+    document.querySelectorAll('.op').forEach(b => b.onclick = () => jawab(Number(b.dataset.j)));
+  }
+  async function jawab(j) {
+    if (kirim) return; kirim = true; pilihan = j; getar(30);
+    document.querySelectorAll('.op').forEach(b => { b.disabled = true; if (Number(b.dataset.j) !== j) b.style.opacity = '.3'; });
+    try { S.cek(await c().rpc('kuis_jawab', { p_sesi: sesi, p_no: d.no, p_pilih: j })); terkirim(j); kunci = d.status + '|' + d.no + '|j'; }
+    catch (x) { S.toast(/waktu|berakhir/i.test(x.message) ? 'Waktu menjawab sudah habis' : x.message, 3500); }
+  }
+  function terkirim(j) {
+    warnaBody('');
+    isi(`<div class="tengah terkirim"><div class="bentuk" style="background:${WARNA[j]}">${BENTUK[j]}</div><h1>Jawaban terkirim!</h1><p class="sub">Tunggu hingga waktu habis atau semua pemain menjawab…</p><div class="putar"></div></div>`);
+  }
+  function detak() {
+    const t = $('tm'); if (!t || !d || d.status !== 'soal') return;
+    const sisa = Math.max(0, tenggat - performance.now()), dt = Math.ceil(sisa / 1000);
+    t.style.setProperty('--p', (sisa / (d.durasi * 1000) * 100).toFixed(1) + '%'); t.querySelector('span').textContent = dt; t.classList.toggle('genting', dt <= 5);
+    if (sisa <= 0) document.querySelectorAll('.op').forEach(b => b.disabled = true);
+  }
+  function papan(top) {
+    return top && top.length ? `<div class="papan">${top.map((p, i) => `<div class="${p.nama === saya.nama ? 'saya' : ''}"><b>${['🥇', '🥈', '🥉'][i] || i + 1}</b><span>${esc(namaPendek(p.nama))}</span>${fmt(p.skor)}</div>`).join('')}</div>` : '';
+  }
+  function hasil() {
+    const j = d.jawab, q = d.soal, ok = j && j.benar;
+    warnaBody(!j ? 'kosong' : ok ? 'benar' : 'salah'); getar(ok ? [40, 60, 40] : 200);
+    isi(`<div class="tengah"><div class="hasil-ik">${ok ? '✓' : '✕'}</div><h1>${!j ? 'Waktu habis' : ok ? 'Benar!' : 'Belum tepat'}</h1>
+      ${ok ? `<div class="poin">+${fmt(j.poin)}</div>${d.beruntun >= 2 ? `<div class="api">🔥 ${d.beruntun} jawaban benar beruntun</div>` : ''}` : `<div class="kunci"><i style="background:${WARNA[d.benar]}">${BENTUK[d.benar]}</i><span>Jawaban benar: <b>${esc(q.p[d.benar])}</b></span></div>`}
+      <div class="posisi"><span class="no">${d.peringkat}</span><span>Posisi ke-${d.peringkat}<small>${fmt(d.skor)} poin · dari ${d.peserta} pemain</small></span></div>${papan(d.top)}</div>`);
+  }
+  function akhir() {
+    warnaBody(''); clearInterval(poll); try { sessionStorage.removeItem('sakti-kuis'); } catch (e) { } if (lock) { lock.release(); lock = null; }
+    const p = d.peringkat;
+    isi(`<div class="tengah"><div class="medali">${['🥇', '🥈', '🥉'][p - 1] || '🎉'}</div><h1>${p <= 3 ? 'Selamat, Juara ' + p + '!' : 'Kuis selesai!'}</h1><p class="sub">${esc(d.judul)}</p>
+      <div class="posisi"><span class="no">${p}</span><span>Posisi akhir ke-${p}<small>${fmt(d.skor)} poin · dari ${d.peserta} pemain</small></span></div>${papan(d.top)}
+      <button class="tbl putih" type="button" onclick="location.href='index.html'">Kembali ke SAKTI</button><p class="sub" style="font-size:13.5px">Terima kasih sudah ikut. Mari terapkan nilai BerAKHLAK dalam bekerja!</p></div>`);
+  }
+
+  S.mulai().then(async ({ pegawai }) => {
+    saya = pegawai;
+    const pinUrl = (new URLSearchParams(location.search).get('pin') || '').replace(/\D/g, '');
+    let simpan = ''; try { simpan = sessionStorage.getItem('sakti-kuis') || ''; } catch (e) { }
+    let aktif = null; try { aktif = S.cek(await c().rpc('kuis_aktif')); } catch (e) { }
+    if (pinUrl) return gabung(pinUrl);
+    if (aktif && aktif.ikut) return mulai(aktif.id);
+    if (simpan && aktif && aktif.id === simpan) return mulai(simpan);
+    layarPin(aktif ? aktif.pin : '', '', aktif ? `Kuis “${aktif.judul}” sedang berlangsung. Tekan Masuk untuk ikut bermain.` : '');
+  }).catch(e => S.toast(e.message, 6000));
+})();
+</script>
+</body>
+</html>

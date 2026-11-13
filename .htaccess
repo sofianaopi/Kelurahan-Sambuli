@@ -1,0 +1,26 @@
+# SKP Harian — pengaturan server (Apache/LiteSpeed)
+DirectoryIndex index.html
+Options -Indexes
+
+# Paksa HTTPS (aplikasi & instalasi di HP membutuhkan https)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Jenis file
+AddType application/manifest+json .json
+AddType application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx
+AddType application/vnd.openxmlformats-officedocument.spreadsheetml.sheet .xlsx
+
+# Halaman & kode selalu diperiksa ulang agar pembaruan langsung terasa
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "^sw\.js$">
+    Header set Service-Worker-Allowed "./"
+  </FilesMatch>
+</IfModule>
