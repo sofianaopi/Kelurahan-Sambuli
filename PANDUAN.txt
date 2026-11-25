@@ -1,0 +1,93 @@
+SKP HARIAN — PANDUAN PEMASANGAN (multi-pegawai)
+==============================================
+
+Isi folder
+  index.html     Dashboard pegawai: ringkasan, kegiatan, Target SKP (RK & IKI),
+                 unduh laporan Word, profil
+  input.html     Aplikasi "Catat SKP" gaya WhatsApp (dipasang di HP)
+  admin.html     Halaman admin: tambah / ubah / hapus pengguna, reset password,
+                 daftar jenis kegiatan per bidang
+  template-bukti-dukung.docx
+                 Cetakan dokumen Bukti Dukung (dari dokumen kantor). Untuk mengganti
+                 tampilan dokumen, ganti berkas ini — jangan ubah tulisan {{...}} di dalamnya.
+  config.js      <- DIISI alamat & kunci database (langkah 2)
+  setup.sql      Skrip pembuat database (langkah 1)
+  common.js, docx.js, sw.js, manifest-*.json, icons/  (jangan dihapus)
+
+Cara kerja
+  - Website (file HTML) disimpan di GitHub Pages — gratis.
+  - Data pegawai, kegiatan, dan foto bukti disimpan di database Supabase — gratis.
+  - Pegawai masuk dengan NIP LAMA + password; NIP BARU (18 digit) tampil di dokumen.
+    Akun admin cukup nama + username + password. Database hanya mengizinkan
+    pegawai membaca dan mengubah datanya sendiri. Admin mengelola daftar
+    pegawai, tetapi juga TIDAK bisa melihat isi pekerjaan pegawai lain.
+
+
+LANGKAH 1 — Buat database di Supabase (± 10 menit, sekali saja)
+  1. Buka https://supabase.com -> Start your project -> daftar (bisa pakai akun GitHub).
+  2. New project: isi nama (mis. skp-harian), buat Database Password (simpan baik-baik),
+     Region: Southeast Asia (Singapore) -> Create new project. Tunggu ± 2 menit.
+  3. Menu kiri "SQL Editor" -> New query -> buka setup.sql, salin SEMUA isinya,
+     tempel -> klik Run. Harus muncul "Success. No rows returned".
+  4. Menu "Authentication" -> "Sign In / Providers" (atau Providers -> Email):
+       - "Confirm email"  -> MATIKAN (OFF), lalu Save.
+       - "Allow new users to sign up" -> biarkan ON (dipakai admin saat menambah pegawai).
+
+LANGKAH 2 — Isi config.js
+  1. Di Supabase: Project Settings (ikon gerigi) -> API / "Data API" & "API Keys".
+  2. Salin "Project URL"  -> tempel ke SUPABASE_URL di config.js
+     Salin kunci "anon public" (eyJ...) atau "publishable" (sb_publishable_...)
+       -> tempel ke SUPABASE_ANON_KEY.
+     JANGAN gunakan kunci "service_role" / "secret".
+  3. Ubah NAMA_INSTANSI bila perlu. EMAIL_DOMAIN biarkan saja.
+
+LANGKAH 3 — Unggah ke GitHub Pages
+  1. Masuk github.com -> New repository (mis. skp-harian), Public -> Create.
+  2. "uploading an existing file" -> seret SEMUA isi folder ini (termasuk folder icons)
+     -> Commit changes.
+  3. Settings -> Pages -> Source: "Deploy from a branch", Branch: main, folder / (root) -> Save.
+  4. Tunggu 1–2 menit. Alamatnya: https://NAMA-AKUN.github.io/skp-harian/
+
+LANGKAH 4 — Admin pertama & daftar pegawai
+  1. Buka alamat tadi. Di halaman masuk klik "Penyiapan awal: daftarkan admin pertama",
+     isi nama, username (mis. admin), password. Akun ini menjadi admin.
+     (Tautan ini hilang otomatis setelah admin pertama terdaftar.)
+  2. Buka menu "Admin" -> "+ Tambah pengguna":
+       Pegawai: nama lengkap, NIP lama (untuk masuk), NIP baru, jabatan, unit kerja, password awal.
+       Admin  : nama, username, password.
+     Sampaikan NIP lama + password awal ke pegawai.
+  3. Di halaman Admin bagian "Jenis kegiatan per bidang" isi jenis kegiatan untuk
+     Sosial, Distribusi, Produksi, Nerwilis, IPDS, TU. Satu jenis kegiatan = satu
+     dokumen Bukti Dukung. Pegawai juga bisa menambah jenis baru dari aplikasi Catat.
+  4. Ubah = ikon pensil (termasuk reset password, ganti peran, nonaktifkan).
+     Hapus = ikon tempat sampah (akun + semua kegiatannya terhapus permanen).
+  5. Kop surat kantor (untuk laporan lain selain Bukti Dukung): Dashboard -> Profil & Data -> "Unggah template Word (.docx)"
+     (hanya admin). Kop berlaku untuk laporan semua pegawai.
+
+LANGKAH 5 — Pegawai memasang di HP
+  1. Buka https://NAMA-AKUN.github.io/skp-harian/input.html di Chrome HP, masuk dengan NIP lama.
+  2. Menu ⋮ -> "Instal aplikasi" / "Tambahkan ke layar utama"
+     (iPhone: Safari -> Bagikan -> "Tambah ke Layar Utama").
+  3. Pegawai sebaiknya mengganti password sendiri: Dashboard -> Profil & Data.
+
+Catatan
+  - Aplikasi memerlukan internet saat menyimpan (data langsung masuk database).
+  - Paket gratis Supabase: database 500 MB, foto 1 GB — cukup untuk puluhan pegawai
+    bertahun-tahun karena foto otomatis dikecilkan (± 150 KB/foto).
+    Proyek gratis dijeda bila 7 hari tidak dipakai sama sekali; aktifkan lagi
+    dari dashboard Supabase (data tidak hilang).
+  - Pegawai lupa password: admin -> ikon pensil -> isi "Reset password".
+  - Mengubah isi setup.sql tidak diperlukan; skrip aman dijalankan ulang.
+
+Mencatat & mengunduh Bukti Dukung
+  - Aplikasi Catat: pilih BIDANG (baris atas), lalu JENIS KEGIATAN (baris kedua),
+    ketik uraian kegiatan, lampirkan foto, kirim.
+  - Dashboard -> Unduh Laporan Word -> Bukti Dukung SKP -> pilih triwulan (dan bidang).
+    Muncul daftar jenis kegiatan: unduh satu per satu (.docx) atau "Unduh semua" (.zip).
+    Setiap dokumen: Nama, NIP baru, RK & IKI dikosongkan (diisi petugas), [CAPAIAN]
+    berisi uraian kegiatan, lalu foto bukti.
+
+MEMPERBARUI VERSI (bila sebelumnya sudah memasang versi lama)
+  1. Supabase -> SQL Editor -> jalankan setup.sql yang baru (data lama tetap aman).
+  2. GitHub -> unggah semua berkas baru (termasuk template-bukti-dukung.docx),
+     KECUALI config.js milik Anda yang sudah berisi kunci — jangan ditimpa.
